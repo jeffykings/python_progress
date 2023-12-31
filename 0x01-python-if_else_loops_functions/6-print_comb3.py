@@ -5,4 +5,4 @@ for digit in range(10):
         if digit == 8 and digit2 == 9:
             print("{}{}".format(digit, digit2))
         else:
-            print("{}{}, ".format(digit, digit2), end = "")
+            print("{}{}, ".format(digit, digit2), end="")

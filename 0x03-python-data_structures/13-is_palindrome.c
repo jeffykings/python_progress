@@ -2,82 +2,69 @@
 
 /**
  * is_palindrome - checks for palindrome
- * @head: header of the list
- * Return: 1 if true or 0 if not
+ * @head: of the list
+ * Return: 1 for true else 0
  */
 int is_palindrome(listint_t **head)
 {
-	listint_t *temp, *first_half, *second_half;
-	int len, n, half;
+	listint_t *reversed_head;
+	listint_t *temp = *head, *fast = *head, *slow = *head, *dup = NULL;
 
-	len = 0;
-	temp = *head;
-	first_half = second_half = *head;
 	if (*head == NULL || (*head)->next == NULL)
 		return (1);
-	while (temp)
+
+	while (1)
 	{
-		temp = temp->next;
-		len++;
-	}
-	half = len / 2;
-	n = half - 1;
-	if (half == 1)
-	{
-		if (len % 2 == 0)
-			second_half = second_half->next;
-		else
-			second_half = second_half->next->next;
-	} else
-	{
-		while (n)
+		fast = fast->next->next;
+		if (fast == NULL)
 		{
-			first_half = first_half->next;
-			if (len % 2 != 0 && (n > 1))
-				second_half = second_half->next->next;
-			else
-			{
-				if (n > 1)
-					second_half = second_half->next;
-			}
-			n--;
+			dup = slow->next;
+			break;
 		}
-		second_half = second_half->next;
+		if (fast->next == NULL)
+		{
+			dup = slow->next->next;
+			break;
+		}
+		slow = slow->next;
 	}
-	return (check(second_half, first_half, *head, half, len));
+
+	reversed_head = reverse_2ndpart(&dup);
+	while (temp && dup)
+	{
+		if (temp->n == dup->n)
+		{
+			temp = temp->next;
+			dup = dup->next;
+		}
+		else
+			return (0);
+	}
+
+	reverse_2ndpart(&reversed_head);
+
+	if (dup == NULL)
+		return (1);
+	return (0);
 }
 
 /**
- * check - for palindrome
- * @snd_hlf: pointer that moves through the second half of the list
- * @ft_hlf: pointer that moves through the first half of the list
- * @h: head of the list
- * @hlf: integer half of the list
- * @ln: lenght of the list
- * Return: 1 for palindrome else 0
+ * reverse_2ndpart - reverses the 2nd half of the list
+ * @head: starting of the second half of the list
+ * Return: the head of the second reversed half
  */
-int check(listint_t *snd_hlf, listint_t *ft_hlf, listint_t *h, int hlf, int ln)
+listint_t *reverse_2ndpart(listint_t **head)
 {
-	listint_t *temp;
-	int i, n = 0;
+	listint_t *current = *head, *prev = NULL, *nxt = *head;
 
-	while (snd_hlf)
+	while (current)
 	{
-		temp = h;
-		hlf--;
-		if (snd_hlf->n != ft_hlf->n)
-			return (0);
-		for (i = 0; i < hlf; i++)
-		{
-			temp = temp->next;
-			if (ln % 2 != 0 && n < 1)
-			{
-				hlf--;
-				n++;
-			}
-		}
-		ft_hlf = temp;
-		snd_hlf = snd_hlf->next;
+		nxt = nxt->next;
+		current->next = prev;
+		prev = current;
+		current = nxt;
 	}
-	return (1);
+
+	*head = prev;
+	return (prev);
 }
